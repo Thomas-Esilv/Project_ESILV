@@ -23,9 +23,9 @@ def metrics(data):
     return last_price, pct_change, max_price, min_price, volume 
 
 def add_technical_indicators(data):
-    data['MA10'] = ta.ma("ema",data.Close,lenght=10)
-    data['MA30'] = ta.ma("ema",data.Close,lenght=30)
-    data['MA50'] = ta.ma("ema",data.Close,lenght=50)
+    data['MA10'] = data.Close.rolling(window=10).mean()
+    data['MA30'] = data.Close.rolling(window=30).mean()
+    data['MA50'] = data.Close.rolling(window=50).mean()
     return data
 
 # --- SIDEBAR ---
@@ -37,7 +37,8 @@ key_ticker = st.sidebar.selectbox("Ticker",options=["CAC40","EuroStoxx 50","Dow 
 ticker = ticker_dict[key_ticker]
 
 period = st.sidebar.selectbox("Time Period",
-                                options =["1d","1wk","1mo","3mo","6mo","1y","ytd","max"])
+                                options =["1d","1wk","1mo","3mo","6mo","1y","ytd","max"],
+                                index=5)
 
 chart_type = st.sidebar.selectbox("Chart Type", options=["Candlestick","Line"])
 
@@ -108,6 +109,9 @@ if update:
     # Display historical data
     st.subheader("Historical Data")
     st.dataframe(data=data)
+
+else:
+    st.info("Please choose the parameters in the side bar and click update")
 
 
 
