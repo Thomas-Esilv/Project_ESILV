@@ -2,8 +2,6 @@ import streamlit as st
 import yfinance as yf
 import plotly.graph_objects as go
 import plotly.express as px
-import pandas_ta as ta
-
 
 # --- Functions ---
 
@@ -115,6 +113,7 @@ def main_function(ticker="^GSPC",period="1y",chart_type="Candlestick",indicators
 # Main
 
 if "log" not in st.session_state:
+    st.info("Please choose the parameters in the side bar and click update")
     main_function()
     st.session_state.log = "Yes"
 
