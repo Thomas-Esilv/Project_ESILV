@@ -33,7 +33,9 @@ def add_technical_indicators(data):
 st.sidebar.title("Dashboard")
 
 ticker_dict = {"CAC40":"^FCHI","EuroStoxx 50":"^STOXX50E","Dow Jones":"^DJI","S&P500":"^GSPC"}
-key_ticker = st.sidebar.selectbox("Ticker",options=["CAC40","EuroStoxx 50","Dow Jones","S&P500"])
+key_ticker = st.sidebar.selectbox("Ticker",
+                                  options=["CAC40","EuroStoxx 50","Dow Jones","S&P500"],
+                                  index=3)
 ticker = ticker_dict[key_ticker]
 
 period = st.sidebar.selectbox("Time Period",
@@ -50,7 +52,7 @@ update = st.sidebar.button("Update")
 
 # --- Main Area ---
 
-if update:
+def main_function(ticker="^GSPC",period="1y",chart_type="Candlestick",indicators=[]):
 
     data = fecth_data_yahoo(ticker=ticker, period=period)
     data = add_technical_indicators(data=data)
@@ -110,6 +112,14 @@ if update:
     st.subheader("Historical Data")
     st.dataframe(data=data)
 
+# Main
+
+if "log" not in st.session_state:
+    main_function()
+    st.session_state.log = "Yes"
+
+if update:
+    main_function(ticker,period,chart_type,indicators)
 else:
     st.info("Please choose the parameters in the side bar and click update")
 
