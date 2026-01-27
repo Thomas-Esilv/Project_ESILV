@@ -1,5 +1,6 @@
 import streamlit as st
 import yfinance as yf
+import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -52,7 +53,16 @@ update = st.sidebar.button("Update")
 
 def main_function(ticker="^GSPC",period="1y",chart_type="Candlestick",indicators=[]):
 
-    data = fecth_data_yahoo(ticker=ticker, period=period)
+    try:
+        data = fecth_data_yahoo(ticker=ticker, period=period)
+    except:
+        st.info(f"Update parameters in the sidebar")
+        st.stop()
+    
+    if data.empty:
+        st.info(f"Update parameters in the sidebar")
+        st.stop()
+
     data = add_technical_indicators(data=data)
     last_price, pct_change ,max_price, min_price, volume = metrics(data=data)
 
@@ -113,7 +123,6 @@ def main_function(ticker="^GSPC",period="1y",chart_type="Candlestick",indicators
 # Main
 
 if "log" not in st.session_state:
-    st.info("Please choose the parameters in the side bar and click update")
     main_function()
     st.session_state.log = "Yes"
 
