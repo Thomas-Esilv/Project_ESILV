@@ -1,7 +1,6 @@
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
-import plotly.express as px
 from plotly.subplots import make_subplots
 import yfinance as yf
 import datetime as dt
@@ -98,26 +97,6 @@ def compute_index(data: list, weights: dict, underlyings: list) -> pd.DataFrame:
                        data=res.tolist(),
                        columns=["index"])
     return res_df
-
-### Backtrader Indicator
-
-class WeightedIndex(bt.Indicator):
-    lines = ('index',)
-    params = (('weights', {}),)
-
-    def __init__(self):
-        self.normalized = []
-        
-        for d in self.datas:
-
-            asset_name = getattr(d, '_name', None)
-
-            if asset_name in self.p.weights:
-                w = self.p.weights[asset_name]
-                self.normalized.append(d.close / d.close[0] * w)
-
-    def next(self):
-        self.lines.index[0] = sum(s[0] for s in self.normalized)
 
 ### Backtrader Strategies
 
