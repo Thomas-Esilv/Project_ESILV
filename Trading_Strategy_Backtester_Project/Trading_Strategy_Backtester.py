@@ -437,12 +437,12 @@ st.divider()
 
 ###################### Fees
 
-st.subheader("Commission Broker / Slippage")
+st.subheader("Broker Commission / Slippage")
 
 left_fees, right_fees = st.columns(2)
 
 with left_fees:
-    commission_broker = st.number_input("Commission Broker | 0.001 = 0.1%",
+    broker_commission = st.number_input("Broker Commission | 0.001 = 0.1%",
                                  min_value=0.000,
                                  step=0.001,
                                  value=0.001,
@@ -487,7 +487,7 @@ if run_backtest:
                                                             data=data_cerebro,
                                                             name="Buy & Hold",
                                                             params=strategies_parameters,
-                                                            commission_broker=commission_broker,
+                                                            commission_broker=broker_commission,
                                                             slippage_pct=slippage)
 
         if strategy == "Mean Revertion":
@@ -495,14 +495,15 @@ if run_backtest:
                                                             data=data_cerebro,
                                                             name="Mean Revertion",
                                                             params=strategies_parameters,
-                                                            commission_broker=commission_broker,
+                                                            commission_broker=broker_commission,
                                                             slippage_pct=slippage)
             
         if strategy == "Momentum":
             strategies_results["Momentum"] = run_strategy(strategy_class=Momentum,
                                                             data=data_cerebro,
                                                             name="Momentum",
-                                                            params=strategies_parameters,commission_broker=commission_broker,
+                                                            params=strategies_parameters,
+                                                            commission_broker=broker_commission,
                                                             slippage_pct=slippage)
 
 ###################### Strategies results pyfolio
