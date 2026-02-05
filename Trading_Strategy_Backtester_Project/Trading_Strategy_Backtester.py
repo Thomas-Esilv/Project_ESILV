@@ -435,6 +435,30 @@ if end_date < start_date :
 
 st.divider()
 
+###################### Fees
+
+st.subheader("Commission Broker / Slippage")
+
+left_fees, right_fees = st.columns(2)
+
+with left_fees:
+    commission_broker = st.number_input("Commission Broker | 0.001 = 0.1%",
+                                 min_value=0.000,
+                                 step=0.001,
+                                 value=0.001,
+                                 format="%.3f",
+                                 width=300)
+
+with right_fees:
+    slippage = st.number_input("Slippage | 0.001 = 0.1%",
+                                 min_value=0.000,
+                                 step=0.001,
+                                 value=0.001,
+                                 format="%.3f",
+                                 width=300)
+
+st.divider()
+
 run_backtest = st.button("**Run Backtest**",width="stretch")
 
 ###################### Main
@@ -462,19 +486,24 @@ if run_backtest:
             strategies_results["Buy & Hold"] = run_strategy(strategy_class=BuyAndHold,
                                                             data=data_cerebro,
                                                             name="Buy & Hold",
-                                                            params=strategies_parameters)
+                                                            params=strategies_parameters,
+                                                            commission_broker=commission_broker,
+                                                            slippage_pct=slippage)
 
         if strategy == "Mean Revertion":
             strategies_results["Mean Revertion"] = run_strategy(strategy_class=MeanRevertion,
                                                             data=data_cerebro,
                                                             name="Mean Revertion",
-                                                            params=strategies_parameters)
+                                                            params=strategies_parameters,
+                                                            commission_broker=commission_broker,
+                                                            slippage_pct=slippage)
             
         if strategy == "Momentum":
             strategies_results["Momentum"] = run_strategy(strategy_class=Momentum,
                                                             data=data_cerebro,
                                                             name="Momentum",
-                                                            params=strategies_parameters)
+                                                            params=strategies_parameters,commission_broker=commission_broker,
+                                                            slippage_pct=slippage)
 
 ###################### Strategies results pyfolio
 
