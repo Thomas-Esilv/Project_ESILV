@@ -419,7 +419,7 @@ st.subheader("Time Interval")
 left_time, right_time = st.columns(2)
 
 with left_time:
-    start_date = st.date_input("Start date",value= dt.datetime(2020,1,1),
+    start_date = st.date_input("Start date",value= dt.datetime(2023,1,1),
                                 min_value=dt.datetime(2000,1,1),
                                 max_value=dt.datetime.today(),
                                 width=300)
