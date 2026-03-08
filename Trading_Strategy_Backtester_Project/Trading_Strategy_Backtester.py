@@ -58,6 +58,22 @@ def run_strategy(strategy_class, data, name, params,
 
     rtot_log =  strat.analyzers.returns.get_analysis().get("rtot")
     
+    strat_periodstats = strat.analyzers.periodstats.get_analysis()
+    strat_trades = strat.analyzers.trades.get_analysis()
+
+    strat_trades_total = strat_trades.get("total", {})
+    number_trades_closed = strat_trades_total.get("closed", 0)
+
+    strat_trades_won = strat_trades.get("won", {})
+    number_trades_won = strat_trades_won.get("total", 0)
+
+    hit_ratio = (number_trades_won / number_trades_closed) * 100 if number_trades_closed > 0 else 0
+    
+    strat_trades_pnl = strat_trades.get("pnl", {})
+    strat_trades_pnl_net = strat_trades_pnl.get("net", {})
+    pnl_net_total = strat_trades_pnl_net.get("total", 0)
+    avg_pnl_per_trade = pnl_net_total / number_trades_closed if number_trades_closed > 0 else 0
+
     return {
         "name": name,
         "start_value" : cerebro.broker.startingcash,
@@ -66,14 +82,17 @@ def run_strategy(strategy_class, data, name, params,
         "annualized_return_pct": strat.analyzers.returns.get_analysis().get("rnorm100"),
         "sharpe": strat.analyzers.sharpe.get_analysis().get('sharperatio', None),
         "max_drawdown": strat.analyzers.drawdown.get_analysis().max.drawdown,
-        "total_trades": strat.analyzers.trades.get_analysis().total.total,
-        "number_positive_years" : strat.analyzers.periodstats.get_analysis().get("positive"),
-        "number_negative_years" : strat.analyzers.periodstats.get_analysis().get("negative"),
-        "number_flat_years" : strat.analyzers.periodstats.get_analysis().get("nochange"),
-        "best_year_perf_pct" : strat.analyzers.periodstats.get_analysis().get("best") * 100,
-        "worst_year_perf_pct" : strat.analyzers.periodstats.get_analysis().get("worst") * 100,
-        "average_annual_return_pct" : strat.analyzers.periodstats.get_analysis().get("average") * 100,
-        "annual_std_pct" : strat.analyzers.periodstats.get_analysis().get("stddev") * 100,
+        "total_trades": strat_trades.total.total,
+        "total_trades_closed": number_trades_closed,
+        "Hit_ratio" : hit_ratio,
+        "Avg_pnl_per_trade" : avg_pnl_per_trade,
+        "number_positive_years" : strat_periodstats.get("positive"),
+        "number_negative_years" : strat_periodstats.get("negative"),
+        "number_flat_years" : strat_periodstats.get("nochange"),
+        "best_year_perf_pct" : strat_periodstats.get("best") * 100,
+        "worst_year_perf_pct" : strat_periodstats.get("worst") * 100,
+        "average_annual_return_pct" : strat_periodstats.get("average") * 100,
+        "annual_std_pct" : strat_periodstats.get("stddev") * 100,
         "pyfolio" : strat.analyzers.getbyname("pyfolio") 
     }
 
@@ -523,8 +542,8 @@ if run_backtest:
     st.subheader("Metrics")
 
     metrics = [
-        ("Start Value ($)", "start_value", "{:,.2f}"),
-        ("Final Value ($)", "final_value", "{:,.2f}"),
+        ("Start Value", "start_value", "${:,.2f}"),
+        ("Final Value", "final_value", "${:,.2f}"),
         ("Total Return", "total_return_pct", "{:.2f}%"),
         ("Annualized Return", "annualized_return_pct", "{:.2f}%"),
         ("Best Annual Perf","best_year_perf_pct","{:.2f}%"),
@@ -533,6 +552,9 @@ if run_backtest:
         ("Sharpe Ratio", "sharpe", "{:.3f}"),
         ("Max Drawdown", "max_drawdown", "{:.2f}%"),
         ("Total Trades", "total_trades", "{}"),
+        ("Total Trades Closed", "total_trades_closed", "{}"),
+        ("Hit ratio", "Hit_ratio", "{:.2f}%"),
+        ("Average Pnl/trade", "Avg_pnl_per_trade", "${:,.2f}"),
         ("Positif Years","number_positive_years","{}"),
         ("Negatif Years","number_negative_years","{}"),
         ("Flat Years","number_flat_years","{}"),
